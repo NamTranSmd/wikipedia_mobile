@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wikipedia_app/data/model/local_model/wikipedia.dart';
 import 'package:wikipedia_app/ui/components/custom_image.dart';
 import 'package:wikipedia_app/ui/components/text_custom_style.dart';
 import 'package:wikipedia_app/values/styles.dart';
+import 'package:wikipedia_app/values/colors.dart' as colors;
 
 class ItemWikipediaWidget extends StatelessWidget {
   final Wikipedia wikipedia;
@@ -20,13 +22,27 @@ class ItemWikipediaWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            wikipedia.thumbnail != ""
-                ? CustomImage.network(
-                    url: "https:" + wikipedia.thumbnail,
-                    fit: BoxFit.scaleDown,
-                    width: 80,
-                  )
-                : Container(),
+            Container(
+              width: 80,
+              child: Stack(
+                children: [
+                  Center(
+                    child: SpinKitCircle(
+                      color: colors.loadingColor,
+                      size: 30.0,
+                    ),
+                  ),
+                  wikipedia.thumbnail != ""
+                      ? Container(
+                          color: colors.primaryColor,
+                          child: CustomImage.network(
+                              url: "https:" + wikipedia.thumbnail,
+                              fit: BoxFit.scaleDown),
+                        )
+                      : Container(),
+                ],
+              ),
+            ),
             Container(
               width: MediaQuery.of(context).size.width /
                   (wikipedia.thumbnail != null ? 1.62 : 1.2),
