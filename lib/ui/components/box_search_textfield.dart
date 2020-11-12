@@ -69,6 +69,13 @@ class _BoxSearchTextFieldState extends BaseState<BoxSearchTextField> {
                         fontSize: fontText)),
               ),
             ),
+            widget.controller.text != "" ?
+            GestureDetector(
+                onTap: (){
+                  widget.controller.clear();
+                },
+                child: Icon(Icons.clear,color: Colors.black.withOpacity(0.2)))
+                : Container()
           ],
         ),
     );
