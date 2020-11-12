@@ -10,7 +10,7 @@ import 'package:wikipedia_app/values/images.dart';
 class BoxSearchTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
-  final Function onSearch;
+  final Function(String) onSearch;
   BoxSearchTextField({this.hintText, this.controller,this.onSearch});
 
   @override
@@ -30,7 +30,8 @@ class _BoxSearchTextFieldState extends BaseState<BoxSearchTextField> {
             GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: (){
-                widget.onSearch();
+                FocusScope.of(context).requestFocus(FocusNode());
+                widget.onSearch("");
               },
               child: CustomImage(
                 url: ic_search,
@@ -46,7 +47,11 @@ class _BoxSearchTextFieldState extends BaseState<BoxSearchTextField> {
               child: TextField(
                 controller: widget.controller,
                 onEditingComplete: (){
-                  widget.onSearch();
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  widget.onSearch("");
+                },
+                onChanged: (value){
+                  widget.onSearch(value);
                 },
                 textInputAction: TextInputAction.search,
                 style: TextStyle(

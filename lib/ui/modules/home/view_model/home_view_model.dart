@@ -10,37 +10,36 @@ import 'package:wikipedia_app/utils/check_internet.dart';
 
 class HomeViewModel extends ChangeNotifier {
   TextEditingController searchTextController;
-  HomeRepository repository;
+  HomeRepository _repository;
   HomeContract contract;
   SearchResponse searchResponse;
   bool isLoadData;
   bool validateSearch = false;
   WikiDAO _wikiDAO = WikiDAO();
-
   List<Wikipedia> wikies;
 
   HomeViewModel() {
     isLoadData = true;
-    repository = Injector().onSearch;
+    _repository = Injector().onSearch;
     searchTextController = TextEditingController();
     _getDbInstance().then((value) {
-      isLoadData =false;
-      this.getWikies();
+      isLoadData = false;
+      this.getWikiesLocal(20);
     });
   }
 
   Future _getDbInstance() async => await DbConfig.getInstance();
 
-  void onSearch(int limit) {
+  void onSearch() {
     checkInterNet().then((value) {
       if (value != null && value) {
-        assert(repository != null);
-        isLoadData = true;
-        notifyListeners();
-        repository
-            .onSearch(searchTextController.text, limit)
+        assert(_repository != null);
+        _repository
+            .onSearch(searchTextController.text, 20)
             .then((response) => contract.onSearchSuccess(response))
             .catchError((error) => contract.onSearchError(error));
+      } else {
+        this.searchWikiesLocal(searchTextController.text);
       }
     });
   }
@@ -49,7 +48,7 @@ class HomeViewModel extends ChangeNotifier {
     searchResponse = SearchResponse();
     searchResponse = response;
     isLoadData = false;
-    this.deleteTable();
+    // this.deleteTable();
     searchResponse.pages.forEach((element) {
       _wikiDAO.insert(element);
     });
@@ -61,9 +60,17 @@ class HomeViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getWikies() async {
+  void getWikiesLocal(int limit) async {
     searchResponse = SearchResponse();
-    searchResponse.pages = await _wikiDAO.getWikies();
+    searchResponse.pages = await _wikiDAO.getWikies(limit);
+    print("${searchResponse.pages.length}");
+    notifyListeners();
+  }
+
+  void searchWikiesLocal(String searchText) async {
+    isLoadData = false;
+    searchResponse = SearchResponse();
+    searchResponse.pages = await _wikiDAO.searchWikies(searchText);
     notifyListeners();
   }
 

@@ -10,7 +10,7 @@ class HomeRepositoryImpl implements HomeRepository {
   @override
   Future<SearchResponse> onSearch(String searchText, int limit) async {
     final responseJson = await http.get(
-        ApiConfig.SERVER_URL + ApiEndpoints.SEARCH+"$searchText&limit$limit");
+        ApiConfig.SERVER_URL + ApiEndpoints.SEARCH+"$searchText&limit=$limit");
     final statusCode = responseJson.statusCode;
     var response = json.decode(responseJson.body);
     if (statusCode < 200 || statusCode >= 300 || responseJson.body == null) {

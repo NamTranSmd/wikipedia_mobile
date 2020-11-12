@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:wikipedia_app/data/model/error/get_page_error.dart';
 import 'package:wikipedia_app/data/model/local_model/wiki_detail.dart';
-import 'package:wikipedia_app/data/sources/local/daos/wiki_dao.dart';
 import 'package:wikipedia_app/data/sources/remote/api_config.dart';
 import 'package:wikipedia_app/data/sources/remote/api_endpoints.dart';
 import 'package:wikipedia_app/data/sources/repositories/wikipedia_detail/wiki_repository.dart';

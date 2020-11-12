@@ -14,20 +14,30 @@ class WikiDAO {
   void _getDbInstance() async => _db = await DbConfig.getInstance();
 
   Future<Wikipedia> insert(Wikipedia wiki) async {
-    wiki.id = await _db.insert(WikiTable.tableName, wiki.toJson());
+    List<Map> maps = await _db.query(WikiTable.tableName,
+        columns: [WikiTable.columnId],
+        where: "${WikiTable.columnId} = ?",
+        whereArgs: [wiki.id]);
+    if (maps.length > 0) {
+      await _db.update(WikiTable.tableName, wiki.toJson(),
+          where: '${WikiTable.columnId} = ?', whereArgs: [wiki.id]);
+    } else {
+      wiki.id = await _db.insert(WikiTable.tableName, wiki.toJson());
+    }
     return wiki;
   }
 
-  Future<List<Wikipedia>> getWikies() async {
-    List<Map> maps =
-        await _db.query(WikiTable.tableName, orderBy: "${WikiTable.columnId} DESC", columns: [
-      WikiTable.columnId,
-      WikiTable.columnTitle,
-      WikiTable.columnKey,
-      WikiTable.columnDescription,
-      WikiTable.columnExcerpt,
-      WikiTable.columnThumbnail
-    ]);
+  Future<List<Wikipedia>> getWikies(int limit) async {
+    List<Map> maps = await _db.query(WikiTable.tableName,
+        orderBy: "${WikiTable.columnId} DESC",
+        columns: [
+          WikiTable.columnId,
+          WikiTable.columnTitle,
+          WikiTable.columnKey,
+          WikiTable.columnDescription,
+          WikiTable.columnExcerpt,
+          WikiTable.columnThumbnail
+        ],limit: limit);
 
     List<Wikipedia> wikies = [];
     for (Map<String, dynamic> result in maps) {
@@ -36,23 +46,26 @@ class WikiDAO {
     return wikies;
   }
 
-  Future<WikiTable> getWiki(int id) async {
+  Future<List<Wikipedia>> searchWikies(String searchText) async {
     List<Map> maps = await _db.query(WikiTable.tableName,
         columns: [
           WikiTable.columnId,
           WikiTable.columnTitle,
           WikiTable.columnKey,
           WikiTable.columnDescription,
-          WikiTable.columnExcerpt
+          WikiTable.columnExcerpt,
+          WikiTable.columnThumbnail
         ],
-        where: '${WikiTable.columnId} = ?',
-        whereArgs: [id]);
+        where:
+            "${WikiTable.columnTitle} LIKE '%$searchText%' OR ${WikiTable.columnExcerpt} LIKE '%$searchText%'");
 
+    List<Wikipedia> wikies = [];
     if (maps.length > 0) {
-      return WikiTable.fromJson(maps.first);
+      for (Map<String, dynamic> result in maps) {
+        wikies.add(getWikiFromRaw(result));
+      }
     }
-
-    return null;
+    return wikies;
   }
 
   Future<int> delete(int id) async => await _db.delete(WikiTable.tableName,

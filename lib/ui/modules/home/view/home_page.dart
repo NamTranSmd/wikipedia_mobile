@@ -87,15 +87,8 @@ class _HomePageState extends BaseState<HomePage> implements HomeContract {
           BoxSearchTextField(
             controller: model.searchTextController,
             hintText: search_hint_text,
-            onSearch: () {
-              FocusScope.of(context).requestFocus(FocusNode());
-              checkInterNet().then((value) {
-                if (value != null && value) {
-                  model.onSearch(20);
-                } else {
-                  showDialog();
-                }
-              });
+            onSearch: (value) {
+              model.onSearch();
             },
           ),
         ],
@@ -113,7 +106,6 @@ class _HomePageState extends BaseState<HomePage> implements HomeContract {
           itemBuilder: (context, index) {
             return GestureDetector(
                 onTap: () {
-                  FocusScope.of(context).requestFocus(FocusNode());
                   checkInterNet().then((value) {
                     if (value != null && value) {
                       pushWithAnimation(context,
