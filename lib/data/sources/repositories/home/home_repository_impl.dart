@@ -20,7 +20,4 @@ class HomeRepositoryImpl implements HomeRepository {
       return searchResponse;
     }
   }
-
-
-
 }

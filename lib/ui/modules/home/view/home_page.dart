@@ -2,13 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wikipedia_app/base/base_state.dart';
-import 'package:wikipedia_app/data/model/error/search_error.dart';
 import 'package:wikipedia_app/data/model/local_model/wikipedia.dart';
-import 'package:wikipedia_app/data/model/response/search_response.dart';
 import 'package:wikipedia_app/routes/navigation.dart';
 import 'package:wikipedia_app/ui/components/custom_image.dart';
 import 'package:wikipedia_app/ui/components/loading.dart';
-import 'package:wikipedia_app/ui/modules/home/contract/home_contract.dart';
 import 'package:wikipedia_app/ui/modules/home/view_model/home_view_model.dart';
 import 'package:wikipedia_app/ui/modules/wikipedia_detail/view/wikipedia_detail.dart';
 import 'package:wikipedia_app/ui/components/box_search_textfield.dart';
@@ -22,14 +19,13 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends BaseState<HomePage> implements HomeContract {
+class _HomePageState extends BaseState<HomePage> {
   HomeViewModel mModel;
 
   @override
   void initState() {
     super.initState();
     mModel = Provider.of<HomeViewModel>(context, listen: false);
-    mModel.contract = this;
   }
 
   @override
@@ -118,16 +114,6 @@ class _HomePageState extends BaseState<HomePage> implements HomeContract {
                 child: ItemWikipediaWidget(wikipedia: wikipedia[index]));
           }),
     );
-  }
-
-  @override
-  void onSearchError(SearchError error) {
-    mModel.searchError();
-  }
-
-  @override
-  void onSearchSuccess(SearchResponse response) {
-    mModel.searchSuccess(response);
   }
 
   void showDialog() {

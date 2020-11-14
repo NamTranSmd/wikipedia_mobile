@@ -4,10 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wikipedia_app/base/base_state.dart';
-import 'package:wikipedia_app/data/model/error/get_page_error.dart';
 import 'package:wikipedia_app/data/model/local_model/wiki_detail.dart';
 import 'package:wikipedia_app/ui/components/loading.dart';
-import 'package:wikipedia_app/ui/modules/wikipedia_detail/contract/wikipedia_contract.dart';
 import 'package:wikipedia_app/ui/modules/wikipedia_detail/view_model/wikipedia_view_model.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:wikipedia_app/ui/components/text_custom_style.dart';
@@ -23,8 +21,7 @@ class WikiDetailPage extends StatefulWidget {
   _WikiDetailPageState createState() => _WikiDetailPageState();
 }
 
-class _WikiDetailPageState extends BaseState<WikiDetailPage>
-    implements WikiDetailContract {
+class _WikiDetailPageState extends BaseState<WikiDetailPage> {
   WikiDetailViewModel mModel;
   Completer<WebViewController> _controller = Completer<WebViewController>();
 
@@ -32,7 +29,6 @@ class _WikiDetailPageState extends BaseState<WikiDetailPage>
   void initState() {
     super.initState();
     mModel = Provider.of<WikiDetailViewModel>(context, listen: false);
-    mModel.contract = this;
     mModel.onGetDetail(widget.title);
     mModel.isLoadData = true;
   }
@@ -82,16 +78,6 @@ class _WikiDetailPageState extends BaseState<WikiDetailPage>
       onPageFinished: (String url) {},
       gestureNavigationEnabled: true,
     ));
-  }
-
-  @override
-  void onDetailWikiError(GetPageError error) {
-    mModel.getDetailError();
-  }
-
-  @override
-  void onDetailWikiSuccess(WikiDetail response) {
-    mModel.getDetailSuccess(response);
   }
 
   @override
